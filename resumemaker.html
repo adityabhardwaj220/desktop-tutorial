@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Resume Builder</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; display: flex; height: 100vh; }
+    .container { display: flex; width: 100%; }
+    .form-panel, .preview-panel { flex: 1; padding: 20px; overflow-y: auto; }
+    .form-panel { background: #f4f4f4; }
+    .preview-panel { border-left: 2px solid #ccc; background: white; }
+    input, textarea, select, button { width: 100%; padding: 8px; margin: 8px 0; }
+    h1, h2 { margin: 10px 0 5px; }
+    .template-modern h1 { color: #175a59; }
+    .template-classic h1 { color: #000; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Input Form -->
+    <div class="form-panel">
+      <h2>Enter Your Details</h2>
+      <input type="text" id="name" placeholder="Full Name">
+      <input type="text" id="email" placeholder="Email">
+      <textarea id="education" placeholder="Education"></textarea>
+      <textarea id="experience" placeholder="Work Experience"></textarea>
+      <textarea id="skills" placeholder="Skills"></textarea>
+
+      <label>Choose Template:</label>
+      <select id="template">
+        <option value="classic">Classic</option>
+        <option value="modern">Modern</option>
+      </select>
+
+      <button onclick="downloadPDF()">Download PDF</button>
+      <button onclick="resetForm()">Reset</button>
+    </div>
+
+    <!-- Resume Preview -->
+    <div class="preview-panel" id="resume-preview">
+      <h1 id="preview-name">Your Name</h1>
+      <h2>Email</h2>
+      <p id="preview-email">example@gmail.com</p>
+      <h2>Education</h2>
+      <p id="preview-education">Add your education</p>
+      <h2>Experience</h2>
+      <p id="preview-experience">Add your work experience</p>
+      <h2>Skills</h2>
+      <p id="preview-skills">Add your skills</p>
+    </div>
+  </div>
+
+  <!-- PDF Export Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+  <script>
+    const inputs = ['name','email','education','experience','skills'];
+    inputs.forEach(id => {
+      document.getElementById(id).addEventListener('input', updatePreview);
+    });
+
+    document.getElementById('template').addEventListener('change', updateTemplate);
+
+    function updatePreview() {
+      document.getElementById('preview-name').textContent = document.getElementById('name').value || "Your Name";
+      document.getElementById('preview-email').textContent = document.getElementById('email').value || "email@example.com";
+      document.getElementById('preview-education').textContent = document.getElementById('education').value || "Add your education";
+      document.getElementById('preview-experience').textContent = document.getElementById('experience').value || "Add your work experience";
+      document.getElementById('preview-skills').textContent = document.getElementById('skills').value || "Add your skills";
+    }
+
+    function updateTemplate() {
+      const template = document.getElementById('template').value;
+      const preview = document.getElementById('resume-preview');
+      preview.className = 'preview-panel template-' + template;
+    }
+
+    function downloadPDF() {
+      const element = document.getElementById('resume-preview');
+      html2pdf().from(element).save('resume.pdf');
+    }
+
+    function resetForm() {
+      inputs.forEach(id => document.getElementById(id).value = "");
+      document.getElementById('template').value = "classic";
+      updatePreview();
+      updateTemplate();
+    }
+  </script>
+</body>
+</html>
